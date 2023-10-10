@@ -1,19 +1,22 @@
 const GRID_SIZE = 20;
-let headX = 0;
-let headY = 60;
 let foodX;
 let foodY;
 let numberOfCellsX;
 let numberOfCellsY;
-movingRight = true;
+let speedX = GRID_SIZE;
+let speedY = GRID_SIZE;
 let randomCellX;
 let randomCellFloorX;
 let randomCellY;
 let randomCellFloorY;
+let movingRight = true;
+let movingLeft = false;
+let movingUp = false;
+let movingDown = false;
 
 function setup() {
     createCanvas(600, 600)
-    frameRate(3)
+    frameRate(5)
 
     numberOfCellsX = width / GRID_SIZE
     randomCellX = random(numberOfCellsX)
@@ -27,22 +30,69 @@ function setup() {
 }
 function draw() {
     background(255)
+    speedX = constrain(speedX, GRID_SIZE, width - GRID_SIZE)
+    speedY = constrain(speedY, GRID_SIZE, height - GRID_SIZE)
     noStroke()
     rectMode(CENTER)
     fill(0, 255, 0)
-    square(headX, headY, GRID_SIZE)
+    square(speedX, speedY, GRID_SIZE)
     fill(255, 180, 50)
     circle(foodX, foodY, GRID_SIZE)
-    if(!movingRight && headX <= 0) {
-        movingRight = true;
+
+    if(speedX >= 0) {
+        movingRight = true
     }
-    else if(movingRight && headX < width) {
-        headX += GRID_SIZE;
+
+    if(movingRight = true) {
+        speedX = speedX + GRID_SIZE
     }
-    else if(movingRight && headX >= width) {
-        movingRight = false;
+
+    if(speedX <= 0) {
+        movingLeft = true
     }
-    else if(!movingRight && headX > 0) {
-        headX -= GRID_SIZE;
+
+    if(movingRight = false) {
+        speedX = speedX - GRID_SIZE
+    }
+
+    if(speedY >= 0) {
+        movingUp = false
+    }
+
+    if(movingUp = false) {
+        speedY = speedY - GRID_SIZE
+    }
+
+    if(movingDown <= 0)
+    speedY = speedY + GRID_SIZE
+}
+
+function keyPressed() {
+    if(key === "a") {
+        movingRight = false
+        movingLeft = true
+        movingUp = false
+        movingDown = false
+    }
+
+    if(key === "d") {
+        movingRight = true
+        movingLeft = false
+        movingUp = false
+        movingDown = false
+    }
+
+    if(key === "w") {
+        movingRight = false
+        movingLeft = false
+        movingUp = true
+        movingDown = false
+    }
+
+    if(key === "s") {
+        movingRight = false
+        movingLeft = false
+        movingUp = false
+        movingDown = true
     }
 }
