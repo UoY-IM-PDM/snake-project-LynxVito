@@ -1,4 +1,5 @@
 const GRID_SIZE = 20;
+<<<<<<< Updated upstream
 let foodX;
 let foodY;
 let numberOfCellsX;
@@ -13,6 +14,12 @@ let movingRight = true;
 let movingLeft = false;
 let movingUp = false;
 let movingDown = false;
+=======
+let headX = 0;
+let headY = 60;
+let foodY = 60;
+let foodX = 60;
+>>>>>>> Stashed changes
 
 function setup() {
     createCanvas(600, 600)
@@ -38,6 +45,7 @@ function draw() {
     square(speedX, speedY, GRID_SIZE)
     fill(255, 180, 50)
     circle(foodX, foodY, GRID_SIZE)
+<<<<<<< Updated upstream
 
     if(speedX >= 0) {
         movingRight = true
@@ -95,4 +103,7 @@ function keyPressed() {
         movingUp = false
         movingDown = true
     }
+=======
+    // headX = headX + GRID_SIZE
+>>>>>>> Stashed changes
 }
