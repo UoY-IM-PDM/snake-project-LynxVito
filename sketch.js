@@ -1,120 +1,111 @@
 const GRID_SIZE = 20;
-let numberOfCellsX;
-let numberOfCellsY;
-let speedX = GRID_SIZE;
-let speedY = GRID_SIZE;
-let randomCellX;
-let randomCellFloorX;
-let randomCellY;
-let randomCellFloorY;
-let movingRight = true;
-let movingLeft = false;
-let movingUp = false;
-let movingDown = false;
-let headX = 0;
-let headY = 60;
-let foodY = 60;
-let foodX = 60;
+let numberOfCellsX, numberOfCellsY;
+let speedX, speedY;
+let randomCellX, randomCellFloorX, randomCellY, randomCellFloorY;
+let foodY, foodX;
+let food1X, food1Y, food2X, food2Y, food3X, food3Y;
+let headX;
+let headY;
 
 function setup() {
-    createCanvas(600, 600)
-    frameRate(5)
+    createCanvas(600, 600);
+    frameRate(5);
 
-    numberOfCellsX = width / GRID_SIZE
-    randomCellX = random(numberOfCellsX)
-    randomCellFloorX = floor(randomCellX)
-    foodX = randomCellFloorX * GRID_SIZE + GRID_SIZE * 2
+    numberOfCellsX = width / GRID_SIZE;
+    randomCellX = random(numberOfCellsX);
+    randomCellFloorX = floor(randomCellX);
+    foodX = randomCellFloorX * GRID_SIZE + GRID_SIZE * 2;
 
-    numberOfCellsY = height / GRID_SIZE
-    randomCellY = random(numberOfCellsY)
-    randomCellFloorY = floor(randomCellY)
-    foodY = randomCellFloorY * GRID_SIZE + GRID_SIZE * 2
+    numberOfCellsY = height / GRID_SIZE;
+    randomCellY = random(numberOfCellsY);
+    randomCellFloorY = floor(randomCellY);
+    foodY = randomCellFloorY * GRID_SIZE + GRID_SIZE * 2;
+
+    speedX = GRID_SIZE
+
+    food1X = random(0, width);
+    food1Y = random(0, width);
+    food2X = random(0, width);
+    food2Y = random(0, width);
+    food3X = random(0, width);
+    food3Y = random(0, width);
+
 }
+
 function draw() {
     background(255)
-    speedX = constrain(speedX, GRID_SIZE, width - GRID_SIZE)
-    speedY = constrain(speedY, GRID_SIZE, height - GRID_SIZE)
-    noStroke()
-    rectMode(CENTER)
-    fill(0, 255, 0)
-    square(speedX, speedY, GRID_SIZE)
-    fill(255, 180, 50)
-    circle(foodX, foodY, GRID_SIZE)
+    headX = constrain(speedX, GRID_SIZE, width - GRID_SIZE);
+    headY = constrain(speedY, GRID_SIZE, height - GRID_SIZE);
+    foodX = constrain(foodX, GRID_SIZE, width - GRID_SIZE);
+    foodY = constrain(foodY, GRID_SIZE, height - GRID_SIZE);
+    noStroke();
+    rectMode(CENTER);
 
-    if(speedX > 0) {
-        movingRight = true;
-        movingLeft = false;
-        movingUp = false;
-        movingDown = false;
+    if(headX > width) {
+        speedX = -speedX;
     }
 
-    if(movingRight = true) {
-        speedX = speedX + GRID_SIZE
+    if(headX < 0) {
+        speedX = speedX * -1;
     }
 
-    if(speedX < 0) {
-        movingRight = false;
-        movingLeft = true;
-        movingUp = false;
-        movingDown = false;
+    fill(0, 255, 0);
+    square(headX, GRID_SIZE, GRID_SIZE);
+
+    food(food1X, food1Y);
+    food(food2X, food2Y);
+    food(food3X, food3Y);
+
+    /* if(speedX > 0) {
+        headX += GRID_SIZE;
+    }
+    else if(speedX < 0) {
+        headX += -GRID_SIZE;
+    }
+    else {
+        headX = 0;
     }
 
-    if(movingLeft = true) {
-        speedX = speedX - GRID_SIZE
-    }
 
     if(speedY > 0) {
-        movingRight = false;
-        movingLeft = false;
-        movingUp = true;
-        movingDown = false;
+        headY += GRID_SIZE;
     }
-
-    if(movingUp = true) {
-        speedY = speedY + GRID_SIZE
+    else if(speedY < 0) {
+        headY += -GRID_SIZE;
     }
-
-    if(speedY < 0) {
-        movingRight = false;
-        movingLeft = false;
-        movingUp = false;
-        movingDown = true;
-    }
-
-    if(movingDown = true) {
-        speedY = speedY - GRID_SIZE
-    }
-
+    else {
+        headY = 0;
+    } */
 
 }
+
+ function food(foodX, foodY) {
+    fill(255, 180, 50);
+    circle(foodX, foodY, GRID_SIZE);
+} 
 
 function keyPressed() {
     if(key === "a") {
-        movingRight = false
-        movingLeft = true
-        movingUp = false
-        movingDown = false
+        speedX = -speedX;
     }
-
-    if(key === "d") {
-        movingRight = true
-        movingLeft = false
-        movingUp = false
-        movingDown = false
+    else if(key === "d") {
+        speedX = speedX;
+    }
+    else {
+        speedX = 0
     }
 
     if(key === "w") {
-        movingRight = false
-        movingLeft = false
-        movingUp = true
-        movingDown = false
+        speedY = speedY;
     }
+    else if(key === "s") {
+        speedY = -speedY;
+    }
+    else {
+        speedY = 0
+    }
+}
 
-    if(key === "s") {
-        movingRight = false
-        movingLeft = false
-        movingUp = false
-        movingDown = true
-    }
-    // headX = headX + GRID_SIZE
+function head(headX, headY) {
+    
 }
