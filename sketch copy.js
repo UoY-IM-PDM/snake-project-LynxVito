@@ -11,7 +11,7 @@ function setup() {
     createCanvas(600, 600);
     frameRate(4);
 
-    speedX = 1;
+    speedX = GRID_SIZE;
     speedY = 0;
 
     snakeX.push(width / 2);
@@ -23,8 +23,6 @@ function setup() {
     food2Y = newFoodCoordinate();
     food3X = newFoodCoordinate();
     food3Y = newFoodCoordinate();
-
-    console.log(snakeX[0])
 
 }
 
@@ -53,8 +51,6 @@ function draw() {
     eatsFood(food2X, food2Y);
     eatsFood(food3X, food3Y);
 
-    addSegment();
-
 }
 
  function food(foodX, foodY) {
@@ -68,20 +64,20 @@ function draw() {
 
 function keyPressed() {
     if(key === "a") {
-        speedX = -1;
+        speedX = -GRID_SIZE;
         speedY = 0;
     }
     else if(key === "d") {
-        speedX = 1;
+        speedX = GRID_SIZE;
         speedY = 0;
     }
 
     else if(key === "w") {
-        speedY = -1;
+        speedY = -GRID_SIZE;
         speedX = 0;
     } 
     else if(key === "s") {
-        speedY = 1;
+        speedY = GRID_SIZE;
         speedX = 0;
     }
 }
@@ -117,7 +113,7 @@ function eatsFood() {
 
  function gameOver() {
     if(snakeX[0] > GRID_SIZE && snakeX[0] < width - GRID_SIZE && snakeY[0] > GRID_SIZE && snakeY[0] < height - GRID_SIZE) {
-        keyPressed();
+        keyPressed()
     }
     
     else {
@@ -216,12 +212,10 @@ for(let i = 0; i < snakeX.length; i++) {
 }
 
 function snakeMoves() {
-
-    snakeX.unshift(snakeX[0] + GRID_SIZE * speedX);
-    snakeY.unshift(snakeY[0] + GRID_SIZE * speedY);
-    snakeX.pop();
-    snakeY.pop();
-
+    for(let i = 0; i < snakeX.length; i++) {
+        snakeX[i] += speedX;
+        snakeY[i] += speedY;
+    }
 }
 
 function addSegment() {
@@ -231,6 +225,6 @@ function addSegment() {
     //     snake();
     // }
 
-    snakeX.push(snakeX[snakeX.length - 1] - GRID_SIZE);
-    snakeY.push(snakeY[snakeY.length - 1] - GRID_SIZE);
+    snakeX.push(snakeX[snakeX.length - 1] - GRID_SIZE * speedX);
+    snakeY.push(snakeY[snakeY.length - 1] - GRID_SIZE * speedY);
 } 
