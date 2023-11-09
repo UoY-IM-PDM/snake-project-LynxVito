@@ -1,30 +1,96 @@
 const GRID_SIZE = 20;
-let numberOfCellsX, numberOfCellsY;
+let numberOfCells;
 let speedX, speedY;
-let randomCellX, randomCellFloorX, randomCellY, randomCellFloorY;
-let foodY, foodX;
-let food1X, food1Y, food2X, food2Y, food3X, food3Y;
-let snakeX = [];
-let snakeY = [];
+let randomCell, randomCellFloor;
+
+let snake;
+let food;
+
+class Food {
+    x;
+    y;
+
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    draw() {
+        fill(230, 230, 0);
+        circle(this.x, this.y, GRID_SIZE);
+    }
+}
+
+class Snake {
+    snakeX = [];
+    snakeY = [];
+    speedX;
+    speedY;
+
+    constructor(snakeX, snakeY, speedX, speedY) {
+        this.snakeX.push(snakeX);
+        this.snakeY.push(snakeY);
+        this.speedX = speedX;
+        this.speedY = speedY;
+    }
+
+    draw() {
+        fill(50, 20, 100);
+        rect(width / 2, height / 2, width - GRID_SIZE, height - GRID_SIZE);
+    }
+
+    drawSnake() {
+        for(let i = 0; i < this.snakeX.length; i++) {
+            if(i === 0) {
+                fill(0, 255, 0);
+            }
+            else {
+                fill(255, 0, 0);
+            }
+        
+            square(this.snakeX[i], this.snakeY[i], GRID_SIZE, 5);
+        }
+    }
+
+    snakeMoves() {
+
+        this.snakeX.unshift(this.snakeX[0] + GRID_SIZE * this.speedX);
+        this.snakeY.unshift(this.snakeY[0] + GRID_SIZE * this.speedY);
+        this.snakeX.pop();
+        this.snakeY.pop();
+    
+    }
+
+    addSegment() {
+    
+        this.snakeX.push(this.snakeX[this.snakeX.length - 1] - GRID_SIZE);
+        this.snakeY.push(this.snakeY[this.snakeY.length - 1] - GRID_SIZE);
+    } 
+}
+
+class Segment {
+    x;
+    y;
+    speedX;
+    speedY;
+
+
+}
 
 function setup() {
     createCanvas(600, 600);
-    frameRate(4);
+    frameRate(5);
 
-    speedX = 1;
-    speedY = 0;
+    food = new Food(newFoodCoordinate(), newFoodCoordinate());
+    snake = new Snake(width / 2, height / 2, 1, 0);
 
-    snakeX.push(width / 2);
-    snakeY.push(height / 2);
+    // speedX = 1;
+    // speedY = 0;
 
-    food1X = newFoodCoordinate();
-    food1Y = newFoodCoordinate();
-    food2X = newFoodCoordinate();
-    food2Y = newFoodCoordinate();
-    food3X = newFoodCoordinate();
-    food3Y = newFoodCoordinate();
+    // snakeX.push(width / 2);
+    // snakeY.push(height / 2);
 
-    console.log(snakeX[0])
+    // console.log(snakeX[0])
 
 }
 
@@ -33,90 +99,80 @@ function draw() {
     noStroke();
     rectMode(CENTER);
 
-    fill(50, 20, 100);
-    rect(width / 2, height / 2, width - GRID_SIZE, height - GRID_SIZE);
+    // fill(50, 20, 100);
+    // rect(width / 2, height / 2, width - GRID_SIZE, height - GRID_SIZE);
 
-    food(food1X, food1Y);
-    food(food2X, food2Y);
-    food(food3X, food3Y);
+    food.draw();
 
-    snakeMoves();
+    // food(food1X, food1Y);
+    // food(food2X, food2Y);
+    // food(food3X, food3Y);
 
-    snakeX[0] = constrain(snakeX[0], GRID_SIZE, width - GRID_SIZE);
-    snakeY[0] = constrain(snakeY[0], GRID_SIZE, height - GRID_SIZE);
+    snake.snakeMoves();
 
-    snake();
+    snake.snakeX[0] = constrain(snake.snakeX[0], GRID_SIZE, width - GRID_SIZE);
+    snake.snakeY[0] = constrain(snake.snakeY[0], GRID_SIZE, height - GRID_SIZE);
+
+    snake.drawSnake();
     
     gameOver();
     
-    eatsFood(food1X, food1Y);
-    eatsFood(food2X, food2Y);
-    eatsFood(food3X, food3Y);
-
-    addSegment();
+    eatsFood(food.x, food.y);
 
 }
 
- function food(foodX, foodY) {
-    foodX = constrain(foodX, 2 * GRID_SIZE, width - 2 * GRID_SIZE);
-    foodY = constrain(foodY, 2 * GRID_SIZE, height - 2 * GRID_SIZE);
+//  function food(food.x, food.y) {
+//     food = constrain(foodX, 2 * GRID_SIZE, width - 2 * GRID_SIZE);
+//     food = constrain(foodY, 2 * GRID_SIZE, height - 2 * GRID_SIZE);
 
-    fill(230, 230, 0);
-    circle(foodX, foodY, GRID_SIZE);
+//     fill(230, 230, 0);
+//     circle(foodX, foodY, GRID_SIZE);
 
-} 
+// } 
 
 function keyPressed() {
     if(key === "a") {
-        speedX = -1;
-        speedY = 0;
+        snake.speedX = -1;
+        snake.speedY = 0;
     }
     else if(key === "d") {
-        speedX = 1;
-        speedY = 0;
+        snake.speedX = 1;
+        snake.speedY = 0;
     }
 
     else if(key === "w") {
-        speedY = -1;
-        speedX = 0;
+        snake.speedY = -1;
+        snake.speedX = 0;
     } 
     else if(key === "s") {
-        speedY = 1;
-        speedX = 0;
+        snake.speedY = 1;
+        snake.speedX = 0;
     }
 }
 
 function newFoodCoordinate() {
-    numberOfCellsX = width / GRID_SIZE;
-    randomCellX = random(numberOfCellsX);
-    randomCellFloorX = floor(randomCellX);
-    return randomCellFloorX * GRID_SIZE + GRID_SIZE * 2;
+
+    numberOfCells = width / GRID_SIZE;
+    randomCell = random(numberOfCells);
+    randomCellFloor = floor(randomCell);
+    let food = randomCellFloor * GRID_SIZE + GRID_SIZE * 2;
+
+    food = constrain(food, 2 * GRID_SIZE, width - 2 * GRID_SIZE);
+
+    return food;
 }
 
-function eatsFood() {
+function eatsFood(foodX, foodY) {
 
-    if(snakeX[0] === food1X && snakeY[0] === food1Y) {
-        food1X = newFoodCoordinate();
-        food1Y = newFoodCoordinate();
-        addSegment();
-    }
-
-    if(snakeX[0] === food2X && snakeY[0] === food2Y) {
-        food2X = newFoodCoordinate();
-        food2Y = newFoodCoordinate();
-        addSegment();
-        
-    }
-
-    if(snakeX[0] === food3X && snakeY[0] === food3Y) {
-        food3X = newFoodCoordinate();
-        food3Y = newFoodCoordinate();
-        addSegment();
+    if(snake.snakeX[0] === foodX && snake.snakeY[0] === foodY) {
+        food = new Food(newFoodCoordinate(), newFoodCoordinate());
+        snake.addSegment();
     }
 } 
 
  function gameOver() {
-    if(snakeX[0] > GRID_SIZE && snakeX[0] < width - GRID_SIZE && snakeY[0] > GRID_SIZE && snakeY[0] < height - GRID_SIZE) {
+    if(snake.snakeX[0] > GRID_SIZE && snake.snakeX[0] < width - GRID_SIZE 
+        && snake.snakeY[0] > GRID_SIZE && snake.snakeY[0] < height - GRID_SIZE) {
         keyPressed();
     }
     
@@ -202,35 +258,35 @@ function eatsFood() {
     }    
 }
 
-function snake() {
-for(let i = 0; i < snakeX.length; i++) {
-    if(i === 0) {
-        fill(0, 255, 0);
-    }
-    else {
-        fill(255, 0, 0);
-    }
+// function snake() {
+// for(let i = 0; i < snakeX.length; i++) {
+//     if(i === 0) {
+//         fill(0, 255, 0);
+//     }
+//     else {
+//         fill(255, 0, 0);
+//     }
 
-    square(snakeX[i], snakeY[i], GRID_SIZE, 5);
-}
-}
+//     square(snakeX[i], snakeY[i], GRID_SIZE, 5);
+//     }
+// }
 
-function snakeMoves() {
+// function snakeMoves() {
 
-    snakeX.unshift(snakeX[0] + GRID_SIZE * speedX);
-    snakeY.unshift(snakeY[0] + GRID_SIZE * speedY);
-    snakeX.pop();
-    snakeY.pop();
+//     snakeX.unshift(snakeX[0] + GRID_SIZE * speedX);
+//     snakeY.unshift(snakeY[0] + GRID_SIZE * speedY);
+//     snakeX.pop();
+//     snakeY.pop();
 
-}
+// }
 
-function addSegment() {
-    // for(let i = 0; i < snakeX.length; i++) {
-    //     snakeX[i] += GRID_SIZE * speedX;
-    //     snakeY[i] += GRID_SIZE * speedY;
-    //     snake();
-    // }
+// function addSegment() {
+//     // for(let i = 0; i < snakeX.length; i++) {
+//     //     snakeX[i] += GRID_SIZE * speedX;
+//     //     snakeY[i] += GRID_SIZE * speedY;
+//     //     snake();
+//     // }
 
-    snakeX.push(snakeX[snakeX.length - 1] - GRID_SIZE);
-    snakeY.push(snakeY[snakeY.length - 1] - GRID_SIZE);
-} 
+//     snakeX.push(snakeX[snakeX.length - 1] - GRID_SIZE);
+//     snakeY.push(snakeY[snakeY.length - 1] - GRID_SIZE);
+// } 
