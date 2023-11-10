@@ -6,6 +6,12 @@ let randomCell, randomCellFloor;
 let snake;
 let food;
 
+let gameOverFont;
+
+let snakeSpeed = [];
+
+let points = [];
+
 class Food {
     x;
     y;
@@ -34,20 +40,16 @@ class Snake {
         this.speedY = speedY;
     }
 
-    draw() {
-        fill(50, 20, 100);
-        rect(width / 2, height / 2, width - GRID_SIZE, height - GRID_SIZE);
-    }
-
     drawSnake() {
         for(let i = 0; i < this.snakeX.length; i++) {
-            if(i === 0) {
-                fill(0, 255, 0);
-            }
-            else {
-                fill(255, 0, 0);
-            }
-        
+            // if(i === 0) {
+            //     fill(0, 255, 0);
+            // }
+            // else {
+            //     fill(255, 0, 0);
+            // }
+            
+            fill(0, 255, 0);
             square(this.snakeX[i], this.snakeY[i], GRID_SIZE, 5);
         }
     }
@@ -66,23 +68,37 @@ class Snake {
         this.snakeX.push(this.snakeX[this.snakeX.length - 1] - GRID_SIZE);
         this.snakeY.push(this.snakeY[this.snakeY.length - 1] - GRID_SIZE);
     } 
+
+    eatsFood(foodX, foodY) {
+
+        if(this.snakeX[0] === foodX && this.snakeY[0] === foodY) {
+            snake.addSegment();
+            points += 1
+
+            food = new Food(newFoodCoordinate(), newFoodCoordinate());
+
+            console.log(points)
+        }
+    } 
 }
 
-class Segment {
-    x;
-    y;
-    speedX;
-    speedY;
+// class Segment {
+//     x;
+//     y;
+//     speedX;
+//     speedY;
 
 
-}
+// }
 
 function setup() {
     createCanvas(600, 600);
-    frameRate(5);
+    frameRate(4);
 
     food = new Food(newFoodCoordinate(), newFoodCoordinate());
     snake = new Snake(width / 2, height / 2, 1, 0);
+
+    points = 0;
 
     // speedX = 1;
     // speedY = 0;
@@ -98,9 +114,8 @@ function draw() {
     background(0);
     noStroke();
     rectMode(CENTER);
-
-    // fill(50, 20, 100);
-    // rect(width / 2, height / 2, width - GRID_SIZE, height - GRID_SIZE);
+    fill(50, 20, 100);
+    rect(width / 2, height / 2, width - GRID_SIZE, height - GRID_SIZE);
 
     food.draw();
 
@@ -110,15 +125,16 @@ function draw() {
 
     snake.snakeMoves();
 
-    snake.snakeX[0] = constrain(snake.snakeX[0], GRID_SIZE, width - GRID_SIZE);
-    snake.snakeY[0] = constrain(snake.snakeY[0], GRID_SIZE, height - GRID_SIZE);
+    snake.snakeX[0] = constrain(snake.snakeX[0], 0, width);
+    snake.snakeY[0] = constrain(snake.snakeY[0], 0, height);
 
     snake.drawSnake();
     
     gameOver();
     
-    eatsFood(food.x, food.y);
+    snake.eatsFood(food.x, food.y);
 
+    speedUp();
 }
 
 //  function food(food.x, food.y) {
@@ -129,6 +145,26 @@ function draw() {
 //     circle(foodX, foodY, GRID_SIZE);
 
 // } 
+
+function speedUp() {
+
+    // for(let i = 0; points.length > i; i++) {
+    //     if(points === i) {
+    //         frameRate(i + 1);
+    //         console.log(points, "i: ", i);
+    //     }
+    // }
+
+    // if(points >= 1) {
+    //     frameRate(4 + snakeSpeed);
+    //     console.log(snakeSpeed);
+    // }
+
+    if(points >= 1) {
+        frameRate(5);
+    }
+    
+}
 
 function keyPressed() {
     if(key === "a") {
@@ -150,6 +186,14 @@ function keyPressed() {
     }
 }
 
+function restart() {
+    if(key === " ") {
+        frameRate(4);
+        food = new Food(newFoodCoordinate(), newFoodCoordinate());
+        snake = new Snake(width / 2, height / 2, 1, 0);
+    }
+}
+
 function newFoodCoordinate() {
 
     numberOfCells = width / GRID_SIZE;
@@ -157,22 +201,26 @@ function newFoodCoordinate() {
     randomCellFloor = floor(randomCell);
     let food = randomCellFloor * GRID_SIZE + GRID_SIZE * 2;
 
-    food = constrain(food, 2 * GRID_SIZE, width - 2 * GRID_SIZE);
+    food = constrain(food, GRID_SIZE, width - GRID_SIZE);
 
     return food;
 }
 
-function eatsFood(foodX, foodY) {
+// function eatsFood(foodX, foodY) {
 
-    if(snake.snakeX[0] === foodX && snake.snakeY[0] === foodY) {
-        food = new Food(newFoodCoordinate(), newFoodCoordinate());
-        snake.addSegment();
-    }
-} 
+//     if(snake.snakeX[0] === foodX && snake.snakeY[0] === foodY) {
+//         food = new Food(newFoodCoordinate(), newFoodCoordinate());
+//         snake.addSegment();
+//     }
+// } 
 
- function gameOver() {
-    if(snake.snakeX[0] > GRID_SIZE && snake.snakeX[0] < width - GRID_SIZE 
-        && snake.snakeY[0] > GRID_SIZE && snake.snakeY[0] < height - GRID_SIZE) {
+function preload() {
+    gameOverFont = loadFont("assets/Oswald-SemiBold.ttf");
+}
+
+function gameOver() {
+    if(snake.snakeX[0] > 0 && snake.snakeX[0] < width
+        && snake.snakeY[0] > 0 && snake.snakeY[0] < height) {
         keyPressed();
     }
     
@@ -180,81 +228,95 @@ function eatsFood(foodX, foodY) {
         background(0);
         fill(50, 20, 100);
         rect(width / 2, height / 2, width - GRID_SIZE, height - GRID_SIZE);
+
         fill(255);
+        textFont(gameOverFont);
+        textSize(100);
+        textAlign(CENTER, CENTER);
+        text("GAME OVER", width / 2, height / 2 - 50);
 
-        //G
+        textSize(20);
+        text("PRESS [SPACE] TO RESTART", width / 2, height / 2 + 50);
 
-        rect(60, 170, 20, 150);
-        rect(100, 245, 80, 20);
-        rect(145, 210, 20, 70);
-        rect(100, 95, 80, 20);
-        rect(130, 170, 50, 20);
+        textSize(40);
+        textAlign(RIGHT, CENTER);
+        text(points, width - 40, 50);
 
-        //A
+        restart();
 
-        rect(185, 175, 20, 160);
-        rect(275, 175, 20, 160);
-        rect(230, 170, 70, 20);
-        rect(230, 95, 90, 20);
+    //     //G
 
-        //M
-        rect(325, 170, 20, 170);
-        rect(420, 170, 20, 170);
-        square(335, 105, 20);
-        square(410, 105, 20);
-        square(345, 115, 20);
-        square(400, 115, 20);
-        square(355, 125, 20);
-        square(390, 125, 20);
-        square(365, 135, 20);
-        square(380, 135, 20);
-        square(372.5, 145, 20);
+    //     rect(60, 170, 20, 150);
+    //     rect(100, 245, 80, 20);
+    //     rect(145, 210, 20, 70);
+    //     rect(100, 95, 80, 20);
+    //     rect(130, 170, 50, 20);
 
-        //E
+    //     //A
 
-        rect(470, 170, 20, 150);
-        rect(510, 245, 80, 20);
-        rect(510, 95, 80, 20);
-        rect(510, 170, 80, 20);
+    //     rect(185, 175, 20, 160);
+    //     rect(275, 175, 20, 160);
+    //     rect(230, 170, 70, 20);
+    //     rect(230, 95, 90, 20);
 
-        //O
+    //     //M
+    //     rect(325, 170, 20, 170);
+    //     rect(420, 170, 20, 170);
+    //     square(335, 105, 20);
+    //     square(410, 105, 20);
+    //     square(345, 115, 20);
+    //     square(400, 115, 20);
+    //     square(355, 125, 20);
+    //     square(390, 125, 20);
+    //     square(365, 135, 20);
+    //     square(380, 135, 20);
+    //     square(372.5, 145, 20);
 
-        rect(60, 415, 20, 150);
-        rect(100, 490, 80, 20);
-        rect(145, 415, 20, 150);
-        rect(100, 340, 80, 20);
+    //     //E
 
-        //V
+    //     rect(470, 170, 20, 150);
+    //     rect(510, 245, 80, 20);
+    //     rect(510, 95, 80, 20);
+    //     rect(510, 170, 80, 20);
 
-        rect(185, 395, 20, 130);
-        rect(275, 395, 20, 130);
-        square(195, 460, 20);
-        square(265, 460, 20);
-        square(205, 470, 20);
-        square(255, 470, 20);
-        square(215, 480, 20);
-        square(245, 480, 20);
-        square(225, 490, 20);
-        square(235, 490, 20);
+    //     //O
 
-        //E
+    //     rect(60, 415, 20, 150);
+    //     rect(100, 490, 80, 20);
+    //     rect(145, 415, 20, 150);
+    //     rect(100, 340, 80, 20);
 
-        rect(325, 415, 20, 150);
-        rect(365, 415, 80, 20);
-        rect(365, 340, 80, 20);
-        rect(365, 490, 80, 20);
+    //     //V
 
-        //R
+    //     rect(185, 395, 20, 130);
+    //     rect(275, 395, 20, 130);
+    //     square(195, 460, 20);
+    //     square(265, 460, 20);
+    //     square(205, 470, 20);
+    //     square(255, 470, 20);
+    //     square(215, 480, 20);
+    //     square(245, 480, 20);
+    //     square(225, 490, 20);
+    //     square(235, 490, 20);
 
-        rect(460, 420, 20, 160);
-        rect(495, 415, 70, 20);
-        rect(495, 340, 70, 20);
-        square(530, 350, 20);
-        square(530, 405, 20);
-        rect(530, 377.5, 20, 40);
-        rect(530, 470, 20, 60);
-        square(510, 430, 20);
-        square(520, 440, 20);
+    //     //E
+
+    //     rect(325, 415, 20, 150);
+    //     rect(365, 415, 80, 20);
+    //     rect(365, 340, 80, 20);
+    //     rect(365, 490, 80, 20);
+
+    //     //R
+
+    //     rect(460, 420, 20, 160);
+    //     rect(495, 415, 70, 20);
+    //     rect(495, 340, 70, 20);
+    //     square(530, 350, 20);
+    //     square(530, 405, 20);
+    //     rect(530, 377.5, 20, 40);
+    //     rect(530, 470, 20, 60);
+    //     square(510, 430, 20);
+    //     square(520, 440, 20);
     }    
 }
 
