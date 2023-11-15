@@ -15,7 +15,8 @@ let gameIsOver;
 
 let snakeSpeed = [];
 
-let points = [];
+let score = [];
+let highScore;
 
 class Food {
     x;
@@ -28,7 +29,7 @@ class Food {
     drawFood() {
        fill(230, 230, 0);
        circle(this.x, this.y, GRID_SIZE);
-      console.log("x: ", this.x, "y :", this.y, "grid size: ", GRID_SIZE)
+    // console.log("x: ", this.x, "y :", this.y, "grid size: ", GRID_SIZE)
     }
 }
 
@@ -77,10 +78,10 @@ class Snake {
 
         if(this.snakeSegment[0].x === thisFood.x && this.snakeSegment[0].y === thisFood.y) {
             snake.addSegment();
-            points += 1
-            frameRate(points * 0.2 + 3);
+            score += 1;
+            frameRate(score * 0.1 + 3);
 
-            if(points % 5 === 0) {
+            if(score % 5 === 0) {
                 food.push(new Food(newFoodCoordinate(), newFoodCoordinate()));
             }
 
@@ -88,7 +89,6 @@ class Snake {
 
             return true;
 
-            console.log(points);
         }
 
         else {
@@ -111,17 +111,17 @@ function setup() {
     createCanvas(600, 600);
     frameRate(3);
 
-    foodAmount = 3;
+    foodAmount = 1;
 
     for(let i = 0; i < foodAmount; i++) {
         food.push(new Food(newFoodCoordinate(), newFoodCoordinate()));
     }
 
-    console.log(food.length);
+    // console.log(food.length);
 
     snake = new Snake(width / 2, height / 2, 1, 0);
 
-    points = 0;
+    score = 0;
 
     gameIsOver = false;
 
@@ -143,7 +143,7 @@ function draw() {
     rect(width / 2, height / 2, width - GRID_SIZE, height - GRID_SIZE);
     // food[0].draw();
     for(let i = 0; i < food.length; i++) {
-        console.log(i)
+        // console.log(i)
         food[i].drawFood();
     }
     // food(food1X, food1Y);
@@ -158,6 +158,9 @@ function draw() {
     snake.drawSnake();
     
     gameOver();
+
+    highScore = score[0];
+    console.log(score, highScore);
     
     for(let i = 0; i < food.length; i++) {
         if(snake.eatsFood(food[i])) {
@@ -179,20 +182,20 @@ function draw() {
 
 // function speedUp() {
 
-//     // for(let i = 0; points.length > i; i++) {
-//     //     if(points === i) {
+//     // for(let i = 0; score.length > i; i++) {
+//     //     if(score === i) {
 //     //         frameRate(i + 1);
-//     //         console.log(points, "i: ", i);
+//     //         console.log(score, "i: ", i);
 //     //     }
 //     // }
 
-//     // if(points >= 1) {
+//     // if(score >= 1) {
 //     //     frameRate(4 + snakeSpeed);
 //     //     console.log(snakeSpeed);
 //     // }
 
-//     if(points >= 1) {
-//         frameRate(points + 3);
+//     if(score >= 1) {
+//         frameRate(score + 3);
 //     }
     
 // }
@@ -232,6 +235,7 @@ function restart() {
 
         snake = new Snake(width / 2, height / 2, 1, 0);
         gameIsOver = false;
+        score = 0;
     }
 }  
 
@@ -283,7 +287,9 @@ function gameOver() {
 
         textSize(40);
         textAlign(RIGHT, CENTER);
-        text(points, width - 40, 50);
+        text(score, width - 40, 50);
+
+        // displayHighScore();
 
         // restart();
 
@@ -362,6 +368,12 @@ function gameOver() {
     //     square(520, 440, 20);
     }    
 }
+
+// function displayHighScore() {
+//     if (gameIsOver === true) {
+//         highScore = score;
+//     }
+// }
 
 // function snake() {
 // for(let i = 0; i < snakeX.length; i++) {
