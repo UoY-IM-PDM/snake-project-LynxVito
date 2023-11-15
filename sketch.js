@@ -15,8 +15,12 @@ let gameIsOver;
 
 let snakeSpeed = [];
 
-let score = [];
-let highScore;
+let score;
+let highScore = [];
+
+let hitBody;
+
+//score.sort();
 
 class Food {
     x;
@@ -111,6 +115,8 @@ function setup() {
     createCanvas(600, 600);
     frameRate(3);
 
+    hitBody = false;
+
     foodAmount = 1;
 
     for(let i = 0; i < foodAmount; i++) {
@@ -150,6 +156,15 @@ function draw() {
     // food(food2X, food2Y);
     // food(food3X, food3Y);
 
+    // score[i].sort();
+
+    if(snake.snakeSegment[0].x === snake.snakeSegment.x &&
+        snake.snakeSegment[0].y === snake.snakeSegment.y) {
+
+        hitBody = true;
+
+    }
+
     snake.snakeMoves();
 
     snake.snakeSegment[0].x = constrain(snake.snakeSegment[0].x, 0, width);
@@ -159,8 +174,7 @@ function draw() {
     
     gameOver();
 
-    highScore = score[0];
-    console.log(score, highScore);
+    // highScore = score[0];
     
     for(let i = 0; i < food.length; i++) {
         if(snake.eatsFood(food[i])) {
@@ -236,6 +250,8 @@ function restart() {
         snake = new Snake(width / 2, height / 2, 1, 0);
         gameIsOver = false;
         score = 0;
+
+        hitBody = false;
     }
 }  
 
@@ -265,7 +281,7 @@ function preload() {
 
 function gameOver() {
     if(snake.snakeSegment[0].x > 0 && snake.snakeSegment[0].x < width
-        && snake.snakeSegment[0].y > 0 && snake.snakeSegment[0].y < height) {
+        && snake.snakeSegment[0].y > 0 && snake.snakeSegment[0].y < height && hitBody === false) {
         keyPressed();
     }
     
@@ -275,6 +291,9 @@ function gameOver() {
         rect(width / 2, height / 2, width - GRID_SIZE, height - GRID_SIZE);
 
         gameIsOver = true;
+
+        // highScore.unshift(score);
+        // console.log(score, highScore);
 
         fill(255);
         textFont(gameOverFont);
